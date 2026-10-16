@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5ef">
+<title>充电记账 · 把每一度电记清楚</title>
+<style>
+:root{--bg:#f7f5ef;--card:#fffefa;--ink:#29342f;--muted:#87918a;--green:#668573;--green-dark:#4f705f;--line:#e9e8df;--soft:#edf1eb;--rose:#bd786e;--shadow:0 8px 24px rgba(49,62,52,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:14px}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 18px 100px}
+.hero{padding:28px 4px 20px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-50px;top:-65px;background:linear-gradient(145deg,#e2e9df,#f1e9dc);opacity:.8}
+.brand{position:relative;z-index:1;display:flex;align-items:center;gap:10px;font-size:24px;font-weight:750;letter-spacing:1px}
+.brand-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:15px;background:#e4ebe2;color:var(--green-dark);font-size:23px}
+.subtitle{color:var(--muted);line-height:1.7;margin:10px 0 0 52px;position:relative;z-index:1}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 12px}
+.section-head h2{font-size:16px;margin:0;font-weight:700}.period{color:var(--muted);font-size:12px}
+.card{background:var(--card);border:1px solid rgba(231,231,221,.7);border-radius:22px;box-shadow:var(--shadow);padding:18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);text-align:center}
+.stat{padding:3px 5px;border-right:1px solid var(--line)}.stat:last-child{border:0}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:10px}.stat-value{font-size:22px;font-weight:750;letter-spacing:-.5px;overflow-wrap:anywhere}.stat-unit{font-size:11px;color:var(--muted);margin-top:4px}
+.avg{background:#f5f4ef;border-radius:14px;margin-top:17px;padding:12px;text-align:center;color:#6f7972;font-size:12px}.avg strong{color:var(--ink);font-size:14px;margin-left:10px}
+.primary{width:100%;border:0;background:var(--green);color:white;border-radius:16px;padding:15px 16px;font-weight:650;box-shadow:0 5px 12px rgba(89,120,100,.12);transition:background .2s}
+.primary:active{background:var(--green-dark)}.add-btn{margin-top:14px;font-size:15px}
+.quicklinks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+.secondary{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:14px;text-align:left;color:var(--ink)}
+.secondary span{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+.records{display:flex;flex-direction:column;gap:10px}
+.record{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);background:var(--card);border-radius:17px}
+.record-icon{width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;background:var(--soft);border-radius:13px;color:var(--green-dark);font-size:18px}
+.record-main{flex:1;min-width:0}.record-date{font-weight:650}.record-place{font-size:12px;color:var(--muted);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.record-right{text-align:right;flex-shrink:0}.record-money{font-size:16px;font-weight:750}.record-kwh{font-size:12px;color:var(--muted);margin-top:5px}
+.row-actions{display:flex;gap:6px;margin-top:9px;justify-content:flex-end}.tiny{border:1px solid var(--line);background:white;color:#69766d;border-radius:9px;padding:5px 9px;font-size:11px}.tiny.delete{color:var(--rose)}
+.empty{text-align:center;color:var(--muted);padding:30px 12px;line-height:1.8}
+.bottom-nav{position:fixed;z-index:5;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,520px);padding:10px 20px calc(10px + env(safe-area-inset-bottom));background:rgba(255,254,250,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr)}
+.nav-btn{border:0;background:transparent;color:#9aa19b;padding:6px 0;font-size:11px}.nav-btn b{display:block;font-size:19px;font-weight:500;margin-bottom:3px}.nav-btn.active{color:var(--green-dark);font-weight:700}
+.page{display:none}.page.active{display:block}
+.form-card{padding:7px 17px}.field{padding:15px 0;border-bottom:1px solid var(--line)}.field:last-child{border:0}.field label{display:block;color:#69766d;font-size:12px;margin-bottom:9px}.field input,.field textarea{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:15px;padding:2px 0}.field textarea{resize:vertical;min-height:48px}.field input::placeholder,.field textarea::placeholder{color:#b2b7b1}
+.form-actions{display:flex;gap:10px;margin-top:16px}.form-actions button{flex:1}.cancel{border:1px solid var(--line);background:var(--card);border-radius:16px;color:#66736a;padding:14px}
+.month-select{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 10px;color:var(--ink)}
+.chart-card{margin-top:12px}.chart-title{font-weight:700;margin-bottom:16px}.bar-list{display:flex;align-items:flex-end;gap:9px;height:140px;padding:0 3px 20px;border-bottom:1px solid var(--line)}.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}.bar{width:min(24px,75%);background:linear-gradient(180deg,#91a996,#668573);border-radius:7px 7px 3px 3px;min-height:3px}.bar-label{font-size:10px;color:var(--muted);margin-top:7px;white-space:nowrap}.bar-value{font-size:10px;color:#69766d;margin-bottom:5px}
+.export-note{background:#f3f3ec;border-radius:15px;padding:14px;color:#7a857d;font-size:12px;line-height:1.7;margin-top:15px}
+.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#33443a;color:white;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;white-space:nowrap}.toast.show{opacity:1}
+.hidden{display:none!important}
+@media(min-width:500px){.app{padding-top:10px}.hero{padding-top:32px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand"><span class="brand-icon">ϟ</span><span>充电记账</span></div>
+    <p class="subtitle">记下每一次充电，也记住日常的小开销。</p>
+  </header>
+
+  <main>
+    <section id="homePage" class="page active">
+      <div class="section-head"><h2>本月小结</h2><span class="period" id="homeMonth"></span></div>
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="stat-label">总度数</div><div class="stat-value" id="totalKwh">0</div><div class="stat-unit">kWh</div></div>
+          <div class="stat"><div class="stat-label">总金额</div><div class="stat-value" id="totalMoney">¥0.00</div><div class="stat-unit">元</div></div>
+          <div class="stat"><div class="stat-label">充电次数</div><div class="stat-value" id="totalCount">0</div><div class="stat-unit">次</div></div>
+        </div>
+        <div class="avg">平均每度电 <strong id="avgPrice">¥0.00 /kWh</strong></div>
+        <button class="primary add-btn" id="addFromHome">＋ 新增充电记录</button>
+      </div>
+      <div class="section-head"><h2>最近记录</h2><button class="tiny" id="viewAll">查看全部 ›</button></div>
+      <div id="recentRecords" class="records"></div>
+      <div class="quicklinks">
+        <button class="secondary" id="goStats">◷　月度统计<span>看看充电花销变化</span></button>
+        <button class="secondary" id="goExport">↧　备份账本<span>导出 CSV 文件</span></button>
+      </div>
+    </section>
+
+    <section id="formPage" class="page">
+      <div class="section-head"><h2 id="formTitle">新增充电记录</h2><span class="period">几秒钟记一笔</span></div>
+      <form id="recordForm">
+        <div class="card form-card">
+          <div class="field"><label for="date">充电日期</label><input id="date" type="date" required></div>
+          <div class="field"><label for="kwh">充电度数（kWh）</label><input id="kwh" type="number" min="0" step="0.01" placeholder="例如：42.6" required inputmode="decimal"></div>
+          <div class="field"><label for="amount">充电金额（元）</label><input id="amount" type="number" min="0" step="0.01" placeholder="例如：35.80" required inputmode="decimal"></div>
+          <div class="field"><label for="place">充电地点</label><input id="place" type="text" maxlength="80" placeholder="例如：小区充电站"></div>
+          <div class="field"><label for="note">备注（选填）</label><textarea id="note" maxlength="300" placeholder="比如：夜间充电、服务费等"></textarea></div>
+        </div>
+        <div class="form-actions"><button type="button" class="cancel" id="cancelForm">取消</button><button type="submit" class="primary" id="saveBtn">保存记录</button></div>
+      </form>
+    </section>
+
+    <section id="historyPage" class="page">
+      <div class="section-head"><h2>历史账单</h2><input type="month" id="historyMonth" class="month-select" aria-label="选择月份"></div>
+      <div id="historySummary" class="period" style="margin:0 3px 12px"></div>
+      <div id="historyRecords" class="records"></div>
+    </section>
+
+    <section id="statsPage" class="page">
+      <div class="section-head"><h2>月度统计</h2><input type="month" id="statsMonth" class="month-select" aria-label="选择统计月份"></div>
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><div class="stat-label">总度数</div><div class="stat-value" id="statsKwh">0</div><div class="stat-unit">kWh</div></div>
+          <div class="stat"><div class="stat-label">总金额</div><div class="stat-value" id="statsMoney">¥0.00</div><div class="stat-unit">元</div></div>
+          <div class="stat"><div class="stat-label">充电次数</div><div class="stat-value" id="statsCount">0</div><div class="stat-unit">次</div></div>
+        </div>
+      </div>
+      <div class="card chart-card"><div class="chart-title">每日充电花费</div><div id="chart" class="bar-list"></div><div class="period" style="margin-top:13px">只展示所选月份有记录的日期</div></div>
+      <div class="export-note">小提示：统计根据充电日期计算。记得偶尔导出 CSV 备份，换手机时也能留住记录。</div>
+    </section>
+
+    <section id="exportPage" class="page">
+      <div class="section-head"><h2>数据备份</h2></div>
+      <div class="card" style="text-align:center;padding:28px 20px">
+        <div style="font-size:42px;color:var(--green);margin-bottom:12px">↧</div>
+        <h2 style="font-size:18px;margin:0 0 10px">把账本备份一下</h2>
+        <p style="color:var(--muted);line-height:1.8;margin:0 0 22px">导出为 CSV 文件，可以用 Excel 或表格软件打开。</p>
+        <button class="primary" id="exportBtn">导出全部记录 CSV</button>
+        <div class="export-note" style="text-align:left">记录保存在当前浏览器中。清除浏览器数据、换设备或换浏览器，都可能导致记录无法自动找回。建议定期导出备份。</div>
+      </div>
+      <div class="section-head"><h2>账本数据</h2></div>
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--muted)">当前记录总数</span><strong id="allCount">0 条</strong></div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="homePage"><b>⌂</b>首页</button>
+  <button class="nav-btn" data-page="historyPage"><b>▤</b>账单</button>
+  <button class="nav-btn" data-page="statsPage"><b>◷</b>统计</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const KEY = 'charging-ledger-records-v1';
+  const $ = id => document.getElementById(id);
+  let records = loadRecords();
+  let editingId = null;
+  const today = new Date();
+  const localDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const monthNow = localDate(today).slice(0,7);
+  $('date').value = localDate(today);
+  $('historyMonth').value = monthNow;
+  $('statsMonth').value = monthNow;
+  $('homeMonth').textContent = monthNow.replace('-', '年') + '月';
+
+  function loadRecords() {
+    try { const data = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(data) ? data : []; }
+    catch { return []; }
+  }
+  function saveRecords() { localStorage.setItem(KEY, JSON.stringify(records)); }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function money(n) { return '¥' + Number(n || 0).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function kwh(n) { return Number(n || 0).toLocaleString('zh-CN',{maximumFractionDigits:2}); }
+  function byDateDesc(a,b) { return b.date.localeCompare(a.date) || (b.createdAt||0)-(a.createdAt||0); }
+  function monthRecords(month) { return records.filter(r => r.date && r.date.startsWith(month)); }
+  function sums(list) { return list.reduce((s,r)=>({kwh:s.kwh+Number(r.kwh||0),amount:s.amount+Number(r.amount||0),count:s.count+1}),{kwh:0,amount:0,count:0}); }
+  function showToast(msg) { const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+  function go(page) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===page));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+    if(page==='formPage') document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    if(page==='historyPage') renderHistory();
+    if(page==='statsPage') renderStats();
+    if(page==='exportPage') $('allCount').textContent = `${records.length} 条`;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+  $('addFromHome').addEventListener('click',()=>openForm());
+  $('viewAll').addEventListener('click',()=>go('historyPage'));
+  $('goStats').addEventListener('click',()=>go('statsPage'));
+  $('goExport').addEventListener('click',()=>go('exportPage'));
+  $('cancelForm').addEventListener('click',()=>go('homePage'));
+  $('historyMonth').addEventListener('change',renderHistory);
+  $('statsMonth').addEventListener('change',renderStats);
+  $('exportBtn').addEventListener('click',exportCSV);
+
+  function openForm(record=null) {
+    editingId = record?.id ?? null;
+    $('recordForm').reset();
+    $('date').value = record?.date || localDate(new Date());
+    $('kwh').value = record?.kwh ?? '';
+    $('amount').value = record?.amount ?? '';
+    $('place').value = record?.place || '';
+    $('note').value = record?.note || '';
+    $('formTitle').textContent = record ? '编辑充电记录' : '新增充电记录';
+    $('saveBtn').textContent = record ? '保存修改' : '保存记录';
+    go('formPage');
+  }
+  $('recordForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const date=$('date').value, kwhValue=Number($('kwh').value), amount=Number($('amount').value);
+    if(!date || $('kwh').value==='' || $('amount').value==='' || !Number.isFinite(kwhValue) || !Number.isFinite(amount) || kwhValue<0 || amount<0) {
+      showToast('请检查日期、度数和金额'); return;
+    }
+    const item={id:editingId ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`,date,kwh:kwhValue,amount,place:$('place').value.trim(),note:$('note').value.trim(),createdAt:editingId ? (records.find(r=>r.id===editingId)?.createdAt||Date.now()) : Date.now()};
+    if(editingId) records=records.map(r=>r.id===editingId?item:r); else records.push(item);
+    saveRecords(); renderAll(); go('homePage'); showToast(editingId?'记录已更新':'已记下一笔');
+  });
+
+  function recordHTML(r) {
+    const place = [r.place,r.note].filter(Boolean).join(' · ') || '还没有添加地点';
+    return `<article class="record"><div class="record-icon">ϟ</div><div class="record-main"><div class="record-date">${esc(r.date)}</div><div class="record-place">${esc(place)}</div></div><div class="record-right"><div class="record-money">${money(r.amount)}</div><div class="record-kwh">${kwh(r.kwh)} kWh</div><div class="row-actions"><button class="tiny" data-edit="${esc(r.id)}">编辑</button><button class="tiny delete" data-delete="${esc(r.id)}">删除</button></div></div></article>`;
+  }
+  function bindRecordActions(container) {
+    container.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>{const r=records.find(x=>String(x.id)===b.dataset.edit);if(r)openForm(r)}));
+    container.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{const r=records.find(x=>String(x.id)===b.dataset.delete);if(!r)return;if(confirm(`确定删除 ${r.date} 的这条充电记录吗？`)){records=records.filter(x=>String(x.id)!==b.dataset.delete);saveRecords();renderAll();showToast('记录已删除')}}));
+  }
+  function renderHome() {
+    const list=monthRecords(monthNow), s=sums(list);
+    $('totalKwh').textContent=kwh(s.kwh); $('totalMoney').textContent=money(s.amount); $('totalCount').textContent=s.count;
+    $('avgPrice').textContent=money(s.kwh?s.amount/s.kwh:0)+' /kWh';
+    const recent=[...records].sort(byDateDesc).slice(0,3), el=$('recentRecords');
+    el.innerHTML=recent.length?recent.map(recordHTML).join(''):'<div class="card empty">这里还空空的。<br>记下第一笔充电记录吧 🌿</div>';
+    bindRecordActions(el);
+  }
+  function renderHistory() {
+    const month=$('historyMonth').value||monthNow, list=monthRecords(month).sort(byDateDesc), s=sums(list);
+    $('historySummary').textContent=`${list.length} 次充电 · ${kwh(s.kwh)} kWh · ${money(s.amount)}`;
+    const el=$('historyRecords'); el.innerHTML=list.length?list.map(recordHTML).join(''):'<div class="card empty">这个月还没有充电记录。<br>慢慢记，不着急 🌱</div>'; bindRecordActions(el);
+  }
+  function renderStats() {
+    const month=$('statsMonth').value||monthNow, list=monthRecords(month), s=sums(list);
+    $('statsKwh').textContent=kwh(s.kwh); $('statsMoney').textContent=money(s.amount); $('statsCount').textContent=s.count;
+    const daily={}; list.forEach(r=>daily[r.date]=(daily[r.date]||0)+Number(r.amount||0));
+    const entries=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-8), max=Math.max(...entries.map(x=>x[1]),1);
+    $('chart').innerHTML=entries.length?entries.map(([date,value])=>`<div class="bar-col" title="${esc(date)}：${money(value)}"><div class="bar-value">${Math.round(value)}</div><div class="bar" style="height:${Math.max(3,value/max*82)}px"></div><div class="bar-label">${date.slice(5).replace('-','/')}</div></div>`).join(''):'<div class="empty" style="width:100%;padding:30px 0">有了记录，这里就会慢慢长出小图表。</div>';
+  }
+  function renderAll(){renderHome();renderHistory();renderStats();$('allCount').textContent=`${records.length} 条`;}
+  function exportCSV() {
+    if(!records.length){showToast('还没有记录可以导出');return}
+    const rows=[['充电日期','充电度数(kWh)','充电金额(元)','充电地点','备注'],...records.slice().sort(byDateDesc).map(r=>[r.date,r.kwh,r.amount,r.place||'',r.note||''])];
+    const csv='\uFEFF'+rows.map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url;a.download=`充电记录_${localDate(new Date())}.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    showToast('账本已导出，记得保存好文件');
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
